@@ -20,11 +20,20 @@ mkdir "$TMP_FOLDER"
 
 files=()
 for folder in "${folders[@]}";do
-	printf "$folder\n"
+	# printf "$folder:\n"
     for file in "$folder"/*;do
         files+=("$file")
     done
 done
+
+IFS=$'\n' files=($(sort -fV <<<"${files[*]}"))
+unset IFS
+
+# for f in "${files[@]}";do
+# 	printf "$f\n"
+# done
+
+# exit
 
 counter=0
 for f in "${files[@]}";do
