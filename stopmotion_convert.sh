@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FRAMERATE=10
+FRAMERATE=8
 
 TMPFOLDER=".convert_tmp"
 FORMATTINGSTRING="%06d"
