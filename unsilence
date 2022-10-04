@@ -13,7 +13,7 @@ AUDIO_EXTS="3gp;aa;aac;aax;act;aiff;alac;amr;ape;au;awb;dss;dvf;flac;gsm;iklax;i
         printf "%s: %s:\n" "$DATE" "$f"
 
         basename="$(basename -- "$f")"
-        filename="${basename%.*}"
+        # filename="${basename%.*}"
         extension="${basename##*.}"
 
         # orig="$filename.original.$extension"
