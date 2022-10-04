@@ -1,36 +1,23 @@
 #!/bin/bash
-{
-for f in "${@}";do
-	# DATE="$(date +"%F_%H-%M-%S")"
-	printf "%s: %s:\n" "$DATE" "$f"
-	# TMP_FOLDER=".cbz_half_scale_$f-$DATE-$RANDOM"
-	# mkdir "$TMP_FOLDER"
-	# cd "$TMP_FOLDER"
-	# 7z e ../"$f"
-	# for i in *;do
-	# 	#printf "$i\n"
-	# 	mogrify -resize 50% "$i"
-	# done
+{ {
+    for f in "${@}"; do
+        printf "%s: %s:\n" "$DATE" "$f"
 
-	basename="$(basename -- "$f")"
-    filename="${basename%.*}"
-	extension="${basename##*.}"
+        basename="$(basename -- "$f")"
+        filename="${basename%.*}"
+        extension="${basename##*.}"
 
-    out="$filename.tmp.$extension"
-    orig="$filename.orig.$extension"
-    i='1'
-    while [ -f "$orig" ];do
-        orig="$filename.orig.$i.$extension"
-        i=$((i+1))
+        out="$filename.tmp.$extension"
+        orig="$filename.orig.$extension"
+        i='1'
+        while [ -f "$orig" ]; do
+            orig="$filename.orig.$i.$extension"
+            i=$((i + 1))
+        done
+        cp "$f" "$orig" &&
+            /home/tobi/.local/bin/unsilence --non-interactive-mode --threads '2' --audio-only --silent-speed '8' --silence-level '-30' "$f" "$out" &&
+            mv "$out" "$f"
+
+        printf "--------------------------------\n\n\n\n"
     done
-    /home/tobi/.local/bin/unsilence --non-interactive-mode --threads '2' --audio-only --silent-speed '8' --silence-level '-30' "$f" "$out"
-    mv "$f" "$orig"
-    mv "$out" "$f"
-
-	# zip ../"$basename.cbz" *
-	# cd ..
-	# rm -r "$TMP_FOLDER"
-
-	printf "--------------------------------\n\n\n\n"
-done
-} 2>&1 >> unsilence_log.txt
+} 2>&1; } >>unsilence_log.txt
