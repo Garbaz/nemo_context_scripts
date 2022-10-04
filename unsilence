@@ -31,12 +31,12 @@ AUDIO_EXTS="3gp;aa;aac;aax;act;aiff;alac;amr;ape;au;awb;dss;dvf;flac;gsm;iklax;i
             audio_only="--audio-only"
         fi
 
-        prog="$filename.in-progress"
+        prog="$f.in-progress"
 
         if [ -d "$prog" ] || [ "$(stat --printf="%s" "$prog")" -ne '0' ]; then exit 1; else touch "$prog"; fi
 
         if [ -e "$orig" ]; then
-            mv "$prog" "$filename.already-unsilenced"
+            mv "$prog" "$f.already-unsilenced"
             exit 2
         else
             mv -n "$f" "$orig_dir"
@@ -45,7 +45,7 @@ AUDIO_EXTS="3gp;aa;aac;aax;act;aiff;alac;amr;ape;au;awb;dss;dvf;flac;gsm;iklax;i
         # out="$filename.tmp.$extension"
 
         if ! "$UNSILENCE_PATH" --non-interactive-mode --threads '2' --silent-speed '8' --silence-level '-35' "$audio_only" "$orig" "$f"; then
-            mv "$prog" "$filename.failed"
+            mv "$prog" "$f.failed"
             mv "$orig" "$f"
             exit 3
         fi
