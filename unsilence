@@ -6,6 +6,8 @@
 # UNSILENCE_PATH="$HOME/.local/bin/unsilence"
 UNSILENCE_PATH="unsilence"
 
+AUDIO_EXTS="3gp;aa;aac;aax;act;aiff;alac;amr;ape;au;awb;dss;dvf;flac;gsm;iklax;ivs;m4a;m4b;m4p;mmf;mp3;mpc;msv;nmf;ogg;opus;ra;raw;rf64;sln;tta;voc;vox;wav;wma;wv;webm;8svx;cda;"
+
 { {
     for f in "${@}"; do
         printf "%s: %s:\n" "$DATE" "$f"
@@ -14,18 +16,40 @@ UNSILENCE_PATH="unsilence"
         filename="${basename%.*}"
         extension="${basename##*.}"
 
-        out="$filename.tmp.$extension"
-        orig="$filename.original.$extension"
-        prog="$filename.in-progress.$extension"
+        # orig="$filename.original.$extension"
+        orig_dir="unsilence_originals"
         i='1'
-        while [ -f "$orig" ]; do
-            orig="$filename.original$i.$extension"
+        while ! mkdir -p "$orig_dir"; do
+            orig_dir="unsilence_originals$0"
             i=$((i + 1))
         done
-        cp -n "$f" "$orig" &&
-            mv "$f" "$prog" &&
-            "$UNSILENCE_PATH" --non-interactive-mode --threads '2' --audio-only --silent-speed '8' --silence-level '-30' "$prog" "$out" &&
-            mv "$out" "$f"
+
+        orig="$orig_dir/$f"
+
+        audio_only=""
+        if [[ "$AUDIO_EXTS" == *"$extension;"* ]]; then
+            audio_only="--audio-only"
+        fi
+
+        prog="$filename.in-progress"
+
+        if [ -d "$prog" ] || [ "$(stat --printf="%s" "$prog")" -ne '0' ]; then exit 1; else touch "$prog"; fi
+
+        if [ -e "$orig" ]; then
+            mv "$prog" "$filename.already-unsilenced"
+            exit 2
+        else
+            mv -n "$f" "$orig_dir"
+        fi
+
+        # out="$filename.tmp.$extension"
+
+        if ! "$UNSILENCE_PATH" --non-interactive-mode --threads '2' --silent-speed '8' --silence-level '-35' "$audio_only" "$orig" "$f"; then
+            mv "$prog" "$filename.failed"
+            mv "$orig" "$f"
+            exit 3
+        fi
+        # mv "$out" "$f"
         rm "$prog"
 
         printf "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n"
