@@ -1,0 +1,3 @@
+for f in "$@";do
+    /home/tobi/programming/python/googlestt/googlestt.py "$f"
+done

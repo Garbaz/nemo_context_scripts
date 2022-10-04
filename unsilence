@@ -1,0 +1,30 @@
+#!/bin/bash
+{
+for f in "${@}";do
+	# DATE="$(date +"%F_%H-%M-%S")"
+	printf "%s: %s:\n" "$DATE" "$f"
+	# TMP_FOLDER=".cbz_half_scale_$f-$DATE-$RANDOM"
+	# mkdir "$TMP_FOLDER"
+	# cd "$TMP_FOLDER"
+	# 7z e ../"$f"
+	# for i in *;do
+	# 	#printf "$i\n"
+	# 	mogrify -resize 50% "$i"
+	# done
+
+	basename="$(basename -- "$f")"
+	extension="${basename##*.}"
+
+    out="$basename.tmp.$extension"
+    orig="$basename.orig.$extension"
+    /home/tobi/.local/bin/unsilence --non-interactive-mode --audio-only --silent-speed '4' --silence-level '-20' "$f" "$out"
+    mv "$f" "$orig"
+    mv "$out" "$f"
+
+	# zip ../"$basename.cbz" *
+	# cd ..
+	# rm -r "$TMP_FOLDER"
+
+	printf "--------------------------------\n\n\n\n"
+done
+} 2>&1 >> unsilence_log.txt
