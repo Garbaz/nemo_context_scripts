@@ -13,11 +13,17 @@ for f in "${@}";do
 	# done
 
 	basename="$(basename -- "$f")"
+    filename="${basename%.*}"
 	extension="${basename##*.}"
 
-    out="$basename.tmp.$extension"
-    orig="$basename.orig.$extension"
-    /home/tobi/.local/bin/unsilence --non-interactive-mode --audio-only --silent-speed '4' --silence-level '-20' "$f" "$out"
+    out="$filename.tmp.$extension"
+    orig="$filename.orig.$extension"
+    i='1'
+    while [ -f "$orig" ];do
+        orig="$filename.orig.$i.$extension"
+        i=$((i+1))
+    done
+    /home/tobi/.local/bin/unsilence --non-interactive-mode --threads '2' --audio-only --silent-speed '8' --silence-level '-30' "$f" "$out"
     mv "$f" "$orig"
     mv "$out" "$f"
 
