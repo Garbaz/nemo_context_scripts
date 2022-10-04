@@ -1,4 +1,7 @@
 #!/bin/bash
+
+UNSILENCE_PATH="/home/tobi/.local/bin/unsilence"
+
 { {
     for f in "${@}"; do
         printf "%s: %s:\n" "$DATE" "$f"
@@ -14,10 +17,10 @@
             orig="$filename.orig.$i.$extension"
             i=$((i + 1))
         done
-        cp "$f" "$orig" &&
-            /home/tobi/.local/bin/unsilence --non-interactive-mode --threads '2' --audio-only --silent-speed '8' --silence-level '-30' "$f" "$out" &&
+        cp -n "$f" "$orig" &&
+            "$UNSILENCE_PATH" --non-interactive-mode --threads '2' --audio-only --silent-speed '8' --silence-level '-30' "$f" "$out" &&
             mv "$out" "$f"
 
-        printf "--------------------------------\n\n\n\n"
+        printf "~~~~~~~~~~~~~~~~~~~\n\n\n\n"
     done
-} 2>&1; } >>unsilence_log.txt
+} 2>&1; } >>".unsilence.log"
