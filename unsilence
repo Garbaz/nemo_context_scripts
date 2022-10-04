@@ -1,6 +1,10 @@
 #!/bin/bash
 
-UNSILENCE_PATH="/home/tobi/.local/bin/unsilence"
+# Using this tool: https://github.com/lagmoellertim/unsilence
+# Install it as instructed there and adjuct path below if it's not in the PATH
+
+# UNSILENCE_PATH="$HOME/.local/bin/unsilence"
+UNSILENCE_PATH="unsilence"
 
 { {
     for f in "${@}"; do
@@ -11,16 +15,19 @@ UNSILENCE_PATH="/home/tobi/.local/bin/unsilence"
         extension="${basename##*.}"
 
         out="$filename.tmp.$extension"
-        orig="$filename.orig.$extension"
+        orig="$filename.original.$extension"
+        prog="$filename.in-progress.$extension"
         i='1'
         while [ -f "$orig" ]; do
-            orig="$filename.orig.$i.$extension"
+            orig="$filename.original$i.$extension"
             i=$((i + 1))
         done
         cp -n "$f" "$orig" &&
-            "$UNSILENCE_PATH" --non-interactive-mode --threads '2' --audio-only --silent-speed '8' --silence-level '-30' "$f" "$out" &&
+            mv "$f" "$prog" &&
+            "$UNSILENCE_PATH" --non-interactive-mode --threads '2' --audio-only --silent-speed '8' --silence-level '-30' "$prog" "$out" &&
             mv "$out" "$f"
+        rm "$prog"
 
-        printf "~~~~~~~~~~~~~~~~~~~\n\n\n\n"
+        printf "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n"
     done
 } 2>&1; } >>".unsilence.log"
