@@ -33,7 +33,7 @@ AUDIO_EXTS="3gp;aa;aac;aax;act;aiff;alac;amr;ape;au;awb;dss;dvf;flac;gsm;iklax;i
 
         prog="$f.in-progress"
 
-        if [ -d "$prog" ] || [ "$(stat --printf="%s" "$prog")" -ne '0' ]; then exit 1; else touch "$prog"; fi
+        if [ -d "$prog" ] || ( [ -e "$prog" ] && [ "$(stat --printf="%s" "$prog")" -ne '0' ] ); then exit 1; else touch "$prog"; fi
 
         if [ -e "$orig" ]; then
             mv "$prog" "$f.already-unsilenced"
@@ -54,4 +54,4 @@ AUDIO_EXTS="3gp;aa;aac;aax;act;aiff;alac;amr;ape;au;awb;dss;dvf;flac;gsm;iklax;i
 
         printf "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n"
     done
-} 2>&1; } >>".unsilence.log"
+} 2>&1; } >> ".unsilence.log"
